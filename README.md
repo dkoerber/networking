@@ -1,3 +1,3 @@
 # networking
 
-A repo to store my networking projects with @cooperlees
+A repo to store my networking projects with [@cooperlees](https://github.com/cooperlees)
