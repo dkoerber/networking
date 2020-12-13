@@ -23,9 +23,20 @@ beers = [
     },
 ]
 
+def make_public_beer(beer):
+    new_beer = {}
+
+    for key in beer:
+        if key == 'id':
+            new_beer['uri'] = f.url_for('get_beer', beer_id = beer['id'], _external = True)
+        else:
+            new_beer[key] = beer[key]
+
+    return new_beer
+
 @app.route('/satnight/api/v1.0/beers', methods = ['GET'])
 def get_beers():
-    return(f.jsonify({'beers': beers}))
+    return(f.jsonify({'beers': [make_public_beer(beer) for beer in beers]}))
 
 @app.route('/satnight/api/v1.0/beers/<int:beer_id>', methods = ['GET'])
 def get_beer(beer_id):
