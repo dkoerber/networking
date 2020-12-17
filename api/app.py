@@ -1,12 +1,24 @@
 import flask as f
+import sqlite3
 
 app = f.Flask(__name__)
+
+def dict_factory(cursor, row):
+    d = {}
+    for idx, col in enumerate(cursor.description):
+        d[col[0]] = row[idx]
+    return d
+
+def connect_db(path):
+    conn = sqlite3.connect(path)
+    conn.row_factory = dict_factory
+    return conn
 
 beers = [
     {
         'id': 1,
         'brand': u'guinness',
-        'description': u'thicc and delicious',
+        'description': u'thick and delicious',
         'drinkable': True,
     },
     {
@@ -40,12 +52,18 @@ def get_beers():
 
 @app.route('/satnight/api/v1.0/beers/<int:beer_id>', methods = ['GET'])
 def get_beer(beer_id):
-    beer = [beer for beer in beers if beer['id'] == beer_id]
+    conn = connect_db('satnight.db')
+    c = conn.cursor()
+    beer = c.execute(
+        '''SELECT * FROM beers WHERE id = ?''',
+        str(beer_id)
+    ).fetchone()
+    conn.close()
 
-    if len(beer) == 0:
+    if not beer:
         f.abort(404)
 
-    return(f.jsonify({'beer': beer[0]}))
+    return f.jsonify({'beer': beer})
 
 @app.route('/satnight/api/v1.0/beers', methods = ['POST'])
 def add_beer():
