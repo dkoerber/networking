@@ -1,2 +1,7 @@
 api/api_venv/
 .DS_Store
+api/__pycache__/
+api/db.py
+api/key.pem
+api/cert.pem
+api/satnight.db
